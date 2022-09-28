@@ -5,6 +5,8 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd" >
 
     <bean id="termofservice.entryDAO" class="fr.paris.lutece.plugins.termofservice.business.EntryDAO" />
+    
+    <bean id="termofservice.userAcceptedDAO" class="fr.paris.lutece.plugins.termofservice.business.UserAcceptedDAO" />
    <bean id="termofservice.tOSPredicate" class="fr.paris.lutece.plugins.termofservice.web.TOSPredicate"/>
    
    

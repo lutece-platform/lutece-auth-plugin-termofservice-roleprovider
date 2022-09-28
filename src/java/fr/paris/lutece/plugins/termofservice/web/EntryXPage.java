@@ -34,17 +34,25 @@
  
 package fr.paris.lutece.plugins.termofservice.web;
 
+import fr.paris.lutece.plugins.mylutece.web.MyLuteceApp;
 import fr.paris.lutece.plugins.termofservice.business.Entry;
 import fr.paris.lutece.plugins.termofservice.business.EntryHome;
+import fr.paris.lutece.plugins.termofservice.business.UserAccepted;
+import fr.paris.lutece.plugins.termofservice.business.UserAcceptedHome;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.web.xpages.XPage;
 import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.xpage.annotations.Controller;
+import fr.paris.lutece.portal.service.security.LuteceUser;
+import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.security.SecurityTokenService;
+import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.util.AppException;
 
+import java.sql.Date;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -58,8 +66,8 @@ import javax.servlet.http.HttpServletRequest;
 public class EntryXPage extends MVCApplication
 {
     // Templates
-    private static final String TEMPLATE_MANAGE_ENTRYS = "/skin/plugins/termofservice/manage_entrys.html";
-    private static final String TEMPLATE_MODIFY_ENTRY = "/skin/plugins/termofservice/modify_entry.html";
+    private static final String TEMPLATE_MANAGE_TOS = "/skin/plugins/termofservice/manage_entrys.html";
+    private static final String TEMPLATE_MODIFY_TOS = "/skin/plugins/termofservice/modify_entry.html";
     
     // Parameters
     private static final String PARAMETER_ID_ENTRY = "id";
@@ -70,11 +78,11 @@ public class EntryXPage extends MVCApplication
     private static final String MARK_ENTRY = "entry";
     
     // Views
-    private static final String VIEW_MANAGE_ENTRYS = "manageEntrys";
-    private static final String VIEW_MODIFY_ENTRY = "modifyEntry";
+    private static final String VIEW_MANAGE_TOS = "manageEntrys";
+    private static final String VIEW_MODIFY_TOS = "modifyEntry";
 
     // Actions
-    private static final String ACTION_MODIFY_ENTRY = "modifyEntry";
+    private static final String ACTION_MODIFY_TOS = "modifyEntry";
 
     // Infos
     private static final String INFO_ENTRY_UPDATED = "termofservice.info.entry.updated";
@@ -90,8 +98,8 @@ public class EntryXPage extends MVCApplication
      * @param request The Http request
      * @return the html code of the list of entrys
      */
-    @View( value = VIEW_MANAGE_ENTRYS, defaultView = true )
-    public XPage getManageEntrys( HttpServletRequest request )
+    @View( value = VIEW_MANAGE_TOS, defaultView = true )
+    public XPage getManageTOS( HttpServletRequest request ) throws UserNotSignedException
     {
         //_entry = null;
         _entry = ( _entry != null ) ? _entry : new Entry(  );
@@ -99,9 +107,18 @@ public class EntryXPage extends MVCApplication
         
         Map<String, Object> model = getModel(  );
         model.put( MARK_ENTRY_LIST, listEntrys );
-        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_MODIFY_ENTRY ) );
+        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_MODIFY_TOS ) );
         
-        return getXPage( TEMPLATE_MANAGE_ENTRYS, getLocale( request ), model );
+        
+        LuteceUser luteceUser = SecurityService.getInstance( ).getRegisteredUser( request );
+        if ( luteceUser == null)
+        {
+        	throw new UserNotSignedException( );
+        }
+        
+
+        
+        return getXPage( TEMPLATE_MANAGE_TOS, getLocale( request ), model );
     }
 
     /**
@@ -110,8 +127,8 @@ public class EntryXPage extends MVCApplication
      * @param request The Http request
      * @return The HTML form to update info
      */
-    @View( VIEW_MODIFY_ENTRY )
-    public XPage getModifyEntry( HttpServletRequest request )
+    @View( VIEW_MODIFY_TOS )
+    public XPage getModifyTOS( HttpServletRequest request )
     {
         int nId = Integer.parseInt( request.getParameter( PARAMETER_ID_ENTRY ) );
 
@@ -124,9 +141,9 @@ public class EntryXPage extends MVCApplication
 
         Map<String, Object> model = getModel(  );
         model.put( MARK_ENTRY, _entry );
-        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_MODIFY_ENTRY ) );
+        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_MODIFY_TOS ) );
 
-        return getXPage( TEMPLATE_MODIFY_ENTRY, getLocale( request ), model );
+        return getXPage( TEMPLATE_MODIFY_TOS, getLocale( request ), model );
     }
 
     /**
@@ -136,9 +153,16 @@ public class EntryXPage extends MVCApplication
      * @return The Jsp URL of the process result
      * @throws AccessDeniedException
      */
-    @Action( ACTION_MODIFY_ENTRY )
-    public XPage doModifyEntry( HttpServletRequest request ) throws AccessDeniedException
+    @Action( ACTION_MODIFY_TOS )
+    public XPage doModifyTOS( HttpServletRequest request ) throws AccessDeniedException, UserNotSignedException
     {     
+    	LuteceUser luteceUser = SecurityService.getInstance( ).getRegisteredUser( request );
+
+    	if ( luteceUser == null)
+        {
+        	throw new UserNotSignedException( );
+        }
+    	
     	int nId = Integer.parseInt( request.getParameter( PARAMETER_ID_ENTRY ) );
 
         if ( _entry == null || ( _entry.getId(  ) != nId ) )
@@ -151,20 +175,19 @@ public class EntryXPage extends MVCApplication
         _entry.setAccepted( accepted );
 		
 
-        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_MODIFY_ENTRY ) )
+        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_MODIFY_TOS ) )
         {
             throw new AccessDeniedException ( "Invalid security token" );
         }
 
-        // Check constraints
-        if ( !validateBean( _entry ) )
-        {
-            return redirect( request, VIEW_MODIFY_ENTRY, PARAMETER_ID_ENTRY, _entry.getId( ) );
-        }
-
-        EntryHome.update( _entry );
+        UserAccepted userAccepted = new UserAccepted( );
+        userAccepted.setGuid( luteceUser.getName( ));
+        userAccepted.setFkIdEntry( nId );
+        userAccepted.setDateAccepted( new Date( Calendar.getInstance().getTime().getTime() ) );
+        
+        UserAcceptedHome.create( userAccepted );
         addInfo( INFO_ENTRY_UPDATED, getLocale( request ) );
 
-        return redirectView( request, VIEW_MANAGE_ENTRYS );
+        return redirectView( request, VIEW_MANAGE_TOS );
     }
 }
