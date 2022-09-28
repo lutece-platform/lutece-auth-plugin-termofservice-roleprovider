@@ -101,21 +101,22 @@ public class EntryXPage extends MVCApplication
     @View( value = VIEW_MANAGE_TOS, defaultView = true )
     public XPage getManageTOS( HttpServletRequest request ) throws UserNotSignedException
     {
-        //_entry = null;
         _entry = ( _entry != null ) ? _entry : new Entry(  );
         List<Entry> listEntrys = EntryHome.getEntrysList(  );
+        Optional<Entry> entryLastVersion = EntryHome.findByLastVersion( );
         
         Map<String, Object> model = getModel(  );
         model.put( MARK_ENTRY_LIST, listEntrys );
+        model.put( MARK_ENTRY, entryLastVersion.get( ) );
         model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_MODIFY_TOS ) );
         
-        
+
         LuteceUser luteceUser = SecurityService.getInstance( ).getRegisteredUser( request );
         if ( luteceUser == null)
         {
         	throw new UserNotSignedException( );
         }
-        
+
 
         
         return getXPage( TEMPLATE_MANAGE_TOS, getLocale( request ), model );
@@ -172,22 +173,25 @@ public class EntryXPage extends MVCApplication
         }
         
         boolean accepted = request.getParameter( PARAMETER_ID_ACCEPTED ) != null;
-        _entry.setAccepted( accepted );
 		
 
         if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_MODIFY_TOS ) )
         {
             throw new AccessDeniedException ( "Invalid security token" );
         }
-
-        UserAccepted userAccepted = new UserAccepted( );
-        userAccepted.setGuid( luteceUser.getName( ));
-        userAccepted.setFkIdEntry( nId );
-        userAccepted.setDateAccepted( new Date( Calendar.getInstance().getTime().getTime() ) );
         
-        UserAcceptedHome.create( userAccepted );
-        addInfo( INFO_ENTRY_UPDATED, getLocale( request ) );
-
+        if ( accepted ) 
+        {
+	        UserAccepted userAccepted = new UserAccepted( );
+	        userAccepted.setGuid( luteceUser.getName( ) );
+	        //userAccepted.setGuid( "nlg" );
+	        userAccepted.setFkIdEntry( nId );
+	        userAccepted.setVersion( _entry.getVersion( ) );
+	        userAccepted.setDateAccepted( new Date( Calendar.getInstance().getTime().getTime() ) );
+	        
+	        UserAcceptedHome.create( userAccepted );
+	        addInfo( INFO_ENTRY_UPDATED, getLocale( request ) );
+        }
         return redirectView( request, VIEW_MANAGE_TOS );
     }
 }

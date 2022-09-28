@@ -50,13 +50,14 @@ import java.util.Optional;
 public final class EntryDAO implements IEntryDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECT = "SELECT id_entry, text, accepted FROM termofservice_entry WHERE id_entry = ?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO termofservice_entry ( text, accepted ) VALUES ( ?, ? ) ";
+    private static final String SQL_QUERY_SELECT = "SELECT id_entry, text, version FROM termofservice_entry WHERE id_entry = ?";
+    private static final String SQL_QUERY_SELECT_LAST_VERSION = "SELECT id_entry, text, version FROM termofservice_entry WHERE version = (select max( version ) from termofservice_entry ) ";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO termofservice_entry ( text, version ) VALUES ( ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM termofservice_entry WHERE id_entry = ? ";
-    private static final String SQL_QUERY_UPDATE = "UPDATE termofservice_entry SET id_entry = ?, text = ?, accepted = ? WHERE id_entry = ?";
-    private static final String SQL_QUERY_SELECTALL = "SELECT id_entry, text, accepted FROM termofservice_entry";
+    private static final String SQL_QUERY_UPDATE = "UPDATE termofservice_entry SET id_entry = ?, text = ?, version = ? WHERE id_entry = ?";
+    private static final String SQL_QUERY_SELECTALL = "SELECT id_entry, text, version FROM termofservice_entry";
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_entry FROM termofservice_entry";
-    private static final String SQL_QUERY_SELECTALL_BY_IDS = "SELECT id_entry, text, accepted FROM termofservice_entry WHERE id_entry IN (  ";
+    private static final String SQL_QUERY_SELECTALL_BY_IDS = "SELECT id_entry, text, version FROM termofservice_entry WHERE id_entry IN (  ";
 
     /**
      * {@inheritDoc }
@@ -68,7 +69,7 @@ public final class EntryDAO implements IEntryDAO
         {
             int nIndex = 1;
             daoUtil.setString( nIndex++ , entry.getText( ) );
-            daoUtil.setBoolean( nIndex++ , entry.getAccepted( ) );
+            daoUtil.setInt( nIndex++ , entry.getVersion( ) );
             
             daoUtil.executeUpdate( );
             if ( daoUtil.nextGeneratedKey( ) ) 
@@ -98,7 +99,7 @@ public final class EntryDAO implements IEntryDAO
 	            
 	            entry.setId( daoUtil.getInt( nIndex++ ) );
 			    entry.setText( daoUtil.getString( nIndex++ ) );
-			    entry.setAccepted( daoUtil.getBoolean( nIndex ) );
+			    entry.setVersion( daoUtil.getInt( nIndex ) );
 	        }
 	
 	        return Optional.ofNullable( entry );
@@ -130,7 +131,7 @@ public final class EntryDAO implements IEntryDAO
 	        
 	        daoUtil.setInt( nIndex++ , entry.getId( ) );
             	daoUtil.setString( nIndex++ , entry.getText( ) );
-            	daoUtil.setBoolean( nIndex++ , entry.getAccepted( ) );
+            	daoUtil.setInt( nIndex++ , entry.getVersion( ) );
 	        daoUtil.setInt( nIndex , entry.getId( ) );
 	
 	        daoUtil.executeUpdate( );
@@ -155,7 +156,7 @@ public final class EntryDAO implements IEntryDAO
 	            
 	            entry.setId( daoUtil.getInt( nIndex++ ) );
 			    entry.setText( daoUtil.getString( nIndex++ ) );
-			    entry.setAccepted( daoUtil.getBoolean( nIndex ) );
+			    entry.setVersion( daoUtil.getInt( nIndex ) );
 	
 	            entryList.add( entry );
 	        }
@@ -238,7 +239,7 @@ public final class EntryDAO implements IEntryDAO
 		            
 		            entry.setId( daoUtil.getInt( nIndex++ ) );
 				    entry.setText( daoUtil.getString( nIndex++ ) );
-				    entry.setAccepted( daoUtil.getBoolean( nIndex ) );
+				    entry.setVersion( daoUtil.getInt( nIndex ) );
 		            
 		            entryList.add( entry );
 		        }
@@ -249,5 +250,26 @@ public final class EntryDAO implements IEntryDAO
 	    }
 		return entryList;
 		
+	}
+
+	@Override
+	public Optional<Entry> loadLastVersion(Plugin _plugin) {
+		try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_LAST_VERSION, _plugin ) )
+        {
+	        daoUtil.executeQuery( );
+	        Entry entry = null;
+	
+	        if ( daoUtil.next( ) )
+	        {
+	            entry = new Entry();
+	            int nIndex = 1;
+	            
+	            entry.setId( daoUtil.getInt( nIndex++ ) );
+			    entry.setText( daoUtil.getString( nIndex++ ) );
+			    entry.setVersion( daoUtil.getInt( nIndex ) );
+	        }
+	
+	        return Optional.ofNullable( entry );
+        }
 	}
 }

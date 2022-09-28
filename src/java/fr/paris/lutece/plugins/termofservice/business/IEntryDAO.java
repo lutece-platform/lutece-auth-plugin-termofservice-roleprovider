@@ -104,4 +104,12 @@ public interface IEntryDAO
      * @return The list which contains the data of all the avant objects
      */
 	List<Entry> selectEntrysListByIds( Plugin _plugin, List<Integer> listIds );
+
+	
+	/**
+     * Load the data from the table
+     * @param plugin the Plugin
+     * @return The instance of the entry
+     */
+	Optional<Entry> loadLastVersion(Plugin _plugin);
 }

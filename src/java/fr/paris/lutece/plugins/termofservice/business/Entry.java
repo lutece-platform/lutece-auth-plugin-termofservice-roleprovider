@@ -49,7 +49,7 @@ public class Entry implements Serializable
     @NotEmpty( message = "#i18n{termofservice.validation.entry.Text.notEmpty}" )
     private String _strText;
     
-    private boolean _bAccepted;
+    private int _nVersion;
 
     /**
      * Returns the Id
@@ -89,21 +89,21 @@ public class Entry implements Serializable
     
     
     /**
-     * Returns the Accepted
-     * @return The Accepted
+     * Returns the Version
+     * @return The Version
      */
-    public boolean getAccepted( )
+    public int getVersion( )
     {
-        return _bAccepted;
+        return _nVersion;
     }
 
     /**
-     * Sets the Accepted
-     * @param bAccepted The Accepted
+     * Sets the Version
+     * @param nVersion The Version
      */ 
-    public void setAccepted( boolean bAccepted )
+    public void setVersion( int nVersion )
     {
-        _bAccepted = bAccepted;
+        _nVersion = nVersion;
     }
     
 }

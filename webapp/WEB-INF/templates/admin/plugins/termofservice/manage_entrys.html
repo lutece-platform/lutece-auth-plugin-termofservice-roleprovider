@@ -14,7 +14,7 @@
     <@table>
         <tr>
             <th>#i18n{termofservice.manage_entrys.columnText}</th>
-            <th>#i18n{termofservice.manage_entrys.columnAccepted}</th>
+            <th>#i18n{termofservice.manage_entrys.columnVersion}</th>
             <th>#i18n{portal.util.labelActions}</th>
         </tr>
         <@tableHeadBodySeparator />
@@ -23,8 +23,8 @@
             <td>
 				${entry.text}
 			</td>
-            <td>
-				${entry.accepted?c}
+			<td>
+				${entry.version}
 			</td>
         	<td>
 				<@aButton href='jsp/admin/plugins/termofservice/ManageEntrys.jsp?view=modifyEntry&id=${entry.id}' title='#i18n{portal.util.labelModify}' hideTitle=['all'] buttonIcon='pencil' />

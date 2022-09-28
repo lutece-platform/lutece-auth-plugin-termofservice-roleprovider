@@ -1,4 +1,3 @@
-<#list entry_list as entry >
 <@box>
 	<@boxHeader title='#i18n{termofservice.manage_entrys.pageTitle}' />
 	<@boxBody>
@@ -12,7 +11,7 @@
 					${entry.text!''}
 				</@formGroup>
 				<@formGroup labelFor='accepted' labelKey='#i18n{termofservice.modify_entry.labelAccepted}' mandatory=true>
-					<@checkBox id="accepted" name="accepted"  value="1" checked=entry.accepted!'false' tabIndex='1' />
+					<@checkBox id="accepted" name="accepted"  value="1" tabIndex='1' />
 				</@formGroup>
 
 				<@formGroup>
@@ -22,4 +21,3 @@
 		</@tform>
 	</@boxBody>
 </@box>
-</#list>

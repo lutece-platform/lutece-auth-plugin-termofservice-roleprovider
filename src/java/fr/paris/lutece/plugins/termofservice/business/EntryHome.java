@@ -102,6 +102,16 @@ public final class EntryHome
     {
         return _dao.load( nKey, _plugin );
     }
+    
+    /**
+     * Returns an instance of a entry whose identifier is specified in parameter
+     * @param nKey The entry primary key
+     * @return an instance of Entry
+     */
+    public static Optional<Entry> findByLastVersion( )
+    {
+        return _dao.loadLastVersion( _plugin );
+    }
 
     /**
      * Load the data of all the entry objects and returns them as a list

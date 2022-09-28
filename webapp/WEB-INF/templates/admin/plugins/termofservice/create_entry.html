@@ -13,7 +13,9 @@
 		<@formGroup labelFor='text' labelKey='#i18n{termofservice.modify_entry.labelText}' mandatory=true>
 			<@input type='textarea' id='text' name='text'  value='${entry.text!\'\'}' richtext=true tabIndex='0' />
 		</@formGroup>
-				
+		<@formGroup labelFor='version' labelKey='#i18n{termofservice.modify_entry.labelVersion}' mandatory=true>
+			<@input type='text' id='version' name='version'  value='${entry.version!\'\'}' tabIndex='1' />
+		</@formGroup>
 		<@actionButtons button1Name="action_createEntry" button2Name="view_manageEntry"/>
     </@tform>
 	</@boxBody>
