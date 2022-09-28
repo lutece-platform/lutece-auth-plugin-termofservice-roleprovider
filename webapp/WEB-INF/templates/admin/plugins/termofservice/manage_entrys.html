@@ -1,0 +1,42 @@
+<#include "managetos_tabs.html" />
+<@tabs2 tab="entry" />
+
+<@box>
+	<@boxHeader title='#i18n{termofservice.manage_entry.title}' boxTools=true>
+		<@tform class='form-inline pull-right' name='manage_entry' action='jsp/admin/plugins/termofservice/ManageEntrys.jsp'>
+			<@button type='submit' name='view_createEntry' buttonIcon='plus' title='#i18n{termofservice.manage_entrys.buttonAdd}' />
+		</@tform>
+	</@boxHeader>
+	<@boxBody>    
+    <@messages infos=infos />
+    <@paginationAdmin paginator=paginator combo=1 />
+    <div class="clearfix"></div>
+    <@table>
+        <tr>
+            <th>#i18n{termofservice.manage_entrys.columnText}</th>
+            <th>#i18n{termofservice.manage_entrys.columnAccepted}</th>
+            <th>#i18n{portal.util.labelActions}</th>
+        </tr>
+        <@tableHeadBodySeparator />
+        <#list entry_list as entry >
+        <tr>
+            <td>
+				${entry.text}
+			</td>
+            <td>
+				${entry.accepted?c}
+			</td>
+        	<td>
+				<@aButton href='jsp/admin/plugins/termofservice/ManageEntrys.jsp?view=modifyEntry&id=${entry.id}' title='#i18n{portal.util.labelModify}' hideTitle=['all'] buttonIcon='pencil' />
+						
+				<@aButton href='jsp/admin/plugins/termofservice/ManageEntrys.jsp?action=confirmRemoveEntry&id=${entry.id}' title='#i18n{portal.util.labelDelete}' buttonIcon='trash' hideTitle=['all'] color='btn-danger'  />
+
+	        </td>
+        </tr>
+        </#list>
+    </@table>
+
+    <@paginationAdmin paginator=paginator />
+
+  </@boxBody>
+</@box>

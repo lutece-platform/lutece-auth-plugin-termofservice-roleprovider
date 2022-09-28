@@ -1,0 +1,25 @@
+<#list entry_list as entry >
+<@box>
+	<@boxHeader title='#i18n{termofservice.manage_entrys.pageTitle}' />
+	<@boxBody>
+		<@tform class='form-horizontal' action='jsp/site/Portal.jsp' >
+				<@messages errors=errors />
+				<@input type="hidden" id="id" name="id" value="${entry.id}"/>
+				<@input type="hidden" value="${token}" name="token" />
+				<@input type="hidden" name="page" value="entry" /> 
+
+				<@formGroup labelFor='text' labelKey='#i18n{termofservice.modify_entry.labelText}' mandatory=true>
+					${entry.text!''}
+				</@formGroup>
+				<@formGroup labelFor='accepted' labelKey='#i18n{termofservice.modify_entry.labelAccepted}' mandatory=true>
+					<@checkBox id="accepted" name="accepted"  value="1" checked=entry.accepted!'false' tabIndex='1' />
+				</@formGroup>
+
+				<@formGroup>
+         			<@button name='action_modifyEntry' type='submit' tabIndex='2' title='#i18n{termofservice.manage_entrys.columnAccepted}' buttonIcon='plus' />
+          			<@button name='view_manageEntrys' type='submit' title='#i18n{portal.util.labelCancel}' buttonIcon='close' color='btn-secondary' cancel=true />
+				</@formGroup>
+		</@tform>
+	</@boxBody>
+</@box>
+</#list>

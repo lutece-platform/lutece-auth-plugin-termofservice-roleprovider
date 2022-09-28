@@ -1,0 +1,10 @@
+<#macro tabs2 tab >
+<@tabs>
+	<@tabList>
+			<li <#if tab="entry">class="active"</#if>>
+				<@aButton href="jsp/admin/plugins/termofservice/ManageEntrys.jsp">#i18n{termofservice.manage_entrys.pageTitle}</@aButton>
+			</li>
+	</@tabList>
+</@tabs>
+
+</#macro>

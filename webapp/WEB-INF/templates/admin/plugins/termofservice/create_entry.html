@@ -1,0 +1,21 @@
+<#include "/admin/util/editor/editor.html" />
+<#include "managetos_tabs.html" />
+<@tabs2 tab="entry" />
+<@box>
+	<@boxHeader title='#i18n{termofservice.create_entry.title}' />
+	<@boxBody>
+    <@tform name='create_entry' action='jsp/admin/plugins/termofservice/ManageEntrys.jsp' >
+
+        <@messages errors=errors />
+        <@input type="hidden" id="id" name="id"/>
+        <@input type="hidden" value="${token}" name="token" />
+
+		<@formGroup labelFor='text' labelKey='#i18n{termofservice.modify_entry.labelText}' mandatory=true>
+			<@input type='textarea' id='text' name='text'  value='${entry.text!\'\'}' richtext=true tabIndex='0' />
+		</@formGroup>
+				
+		<@actionButtons button1Name="action_createEntry" button2Name="view_manageEntry"/>
+    </@tform>
+	</@boxBody>
+</@box>
+ <@initEditor />

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd" >
+
+    <bean id="termofservice.entryDAO" class="fr.paris.lutece.plugins.termofservice.business.EntryDAO" />
+   <bean id="termofservice.tOSPredicate" class="fr.paris.lutece.plugins.termofservice.web.TOSPredicate"/>
+   
+   
+  <bean id="automaticroleprovider.AutomaticRoleConfiguration.role_user_validated_tos" class="fr.paris.lutece.plugins.automaticroleprovider.service.AutomaticRoleConfiguration">
+        <constructor-arg name="strRole" type="java.lang.String" value="role_user_validated_tos" /> 
+        <constructor-arg name="configurationPredicate"  ref="termofservice.tOSPredicate" />
+        <constructor-arg name="bAutomatic" type="java.lang.Boolean" value="false" />   
+    </bean>
+
+</beans>
