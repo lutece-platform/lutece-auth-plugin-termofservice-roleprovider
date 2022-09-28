@@ -34,29 +34,30 @@
  
 package fr.paris.lutece.plugins.termofservice.web;
 
-import fr.paris.lutece.plugins.mylutece.web.MyLuteceApp;
-import fr.paris.lutece.plugins.termofservice.business.Entry;
-import fr.paris.lutece.plugins.termofservice.business.EntryHome;
-import fr.paris.lutece.plugins.termofservice.business.UserAccepted;
-import fr.paris.lutece.plugins.termofservice.business.UserAcceptedHome;
-import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
-import fr.paris.lutece.portal.web.xpages.XPage;
-import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
-import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
-import fr.paris.lutece.portal.util.mvc.xpage.annotations.Controller;
-import fr.paris.lutece.portal.service.security.LuteceUser;
-import fr.paris.lutece.portal.service.security.SecurityService;
-import fr.paris.lutece.portal.service.security.SecurityTokenService;
-import fr.paris.lutece.portal.service.security.UserNotSignedException;
-import fr.paris.lutece.portal.service.admin.AccessDeniedException;
-import fr.paris.lutece.portal.service.util.AppException;
-
 import java.sql.Date;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import javax.servlet.http.HttpServletRequest; 
+
+import javax.servlet.http.HttpServletRequest;
+
+import fr.paris.lutece.plugins.termofservice.business.Entry;
+import fr.paris.lutece.plugins.termofservice.business.EntryHome;
+import fr.paris.lutece.plugins.termofservice.business.UserAccepted;
+import fr.paris.lutece.plugins.termofservice.business.UserAcceptedHome;
+import fr.paris.lutece.portal.service.admin.AccessDeniedException;
+import fr.paris.lutece.portal.service.security.LuteceUser;
+import fr.paris.lutece.portal.service.security.SecurityService;
+import fr.paris.lutece.portal.service.security.SecurityTokenService;
+import fr.paris.lutece.portal.service.security.UserNotSignedException;
+import fr.paris.lutece.portal.service.util.AppException;
+import fr.paris.lutece.portal.service.util.AppPathService;
+import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
+import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
+import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
+import fr.paris.lutece.portal.util.mvc.xpage.annotations.Controller;
+import fr.paris.lutece.portal.web.xpages.XPage; 
 
 
 /**
@@ -117,7 +118,12 @@ public class EntryXPage extends MVCApplication
         	throw new UserNotSignedException( );
         }
 
-
+        Optional<UserAccepted> userAccept = UserAcceptedHome.findByGuid( luteceUser.getName( ) );
+		if (userAccept.isPresent( ) )
+		{
+    	   return redirect(request, AppPathService.getBaseUrl(request));
+		}
+		
         
         return getXPage( TEMPLATE_MANAGE_TOS, getLocale( request ), model );
     }
@@ -191,6 +197,7 @@ public class EntryXPage extends MVCApplication
 	        
 	        UserAcceptedHome.create( userAccepted );
 	        addInfo( INFO_ENTRY_UPDATED, getLocale( request ) );
+	        return redirect(request, AppPathService.getBaseUrl(request));
         }
         return redirectView( request, VIEW_MANAGE_TOS );
     }
