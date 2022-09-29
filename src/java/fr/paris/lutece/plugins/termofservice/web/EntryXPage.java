@@ -68,7 +68,6 @@ public class EntryXPage extends MVCApplication
 {
     // Templates
     private static final String TEMPLATE_MANAGE_TOS = "/skin/plugins/termofservice/manage_entrys.html";
-    private static final String TEMPLATE_MODIFY_TOS = "/skin/plugins/termofservice/modify_entry.html";
     
     // Parameters
     private static final String PARAMETER_ID_ENTRY = "id";
@@ -80,7 +79,6 @@ public class EntryXPage extends MVCApplication
     
     // Views
     private static final String VIEW_MANAGE_TOS = "manageEntrys";
-    private static final String VIEW_MODIFY_TOS = "modifyEntry";
 
     // Actions
     private static final String ACTION_MODIFY_TOS = "modifyEntry";
@@ -108,7 +106,14 @@ public class EntryXPage extends MVCApplication
         
         Map<String, Object> model = getModel(  );
         model.put( MARK_ENTRY_LIST, listEntrys );
-        model.put( MARK_ENTRY, entryLastVersion.get( ) );
+        if ( entryLastVersion.isPresent( ) )
+        {
+        	model.put( MARK_ENTRY, entryLastVersion.get( ) );
+        }
+        else
+        {
+        	model.put( MARK_ENTRY, null );
+        }
         model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_MODIFY_TOS ) );
         
 
@@ -117,40 +122,15 @@ public class EntryXPage extends MVCApplication
         {
         	throw new UserNotSignedException( );
         }
-
+        
         Optional<UserAccepted> userAccept = UserAcceptedHome.findByGuid( luteceUser.getName( ) );
 		if (userAccept.isPresent( ) )
 		{
     	   return redirect(request, AppPathService.getBaseUrl(request));
 		}
-		
+
         
         return getXPage( TEMPLATE_MANAGE_TOS, getLocale( request ), model );
-    }
-
-    /**
-     * Returns the form to update info about a entry
-     *
-     * @param request The Http request
-     * @return The HTML form to update info
-     */
-    @View( VIEW_MODIFY_TOS )
-    public XPage getModifyTOS( HttpServletRequest request )
-    {
-        int nId = Integer.parseInt( request.getParameter( PARAMETER_ID_ENTRY ) );
-
-        if ( _entry == null || ( _entry.getId(  ) != nId ) )
-        {
-            Optional<Entry> optEntry = EntryHome.findByPrimaryKey( nId );
-            _entry = optEntry.orElseThrow( ( ) -> new AppException(ERROR_RESOURCE_NOT_FOUND ) );
-        }
-        
-
-        Map<String, Object> model = getModel(  );
-        model.put( MARK_ENTRY, _entry );
-        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_MODIFY_TOS ) );
-
-        return getXPage( TEMPLATE_MODIFY_TOS, getLocale( request ), model );
     }
 
     /**
@@ -190,7 +170,6 @@ public class EntryXPage extends MVCApplication
         {
 	        UserAccepted userAccepted = new UserAccepted( );
 	        userAccepted.setGuid( luteceUser.getName( ) );
-	        //userAccepted.setGuid( "nlg" );
 	        userAccepted.setFkIdEntry( nId );
 	        userAccepted.setVersion( _entry.getVersion( ) );
 	        userAccepted.setDateAccepted( new Date( Calendar.getInstance().getTime().getTime() ) );
