@@ -143,6 +143,12 @@ public class EntryXPage extends MVCApplication
         Optional<UserAccepted> userAccept = UserAcceptedHome.findByGuid( luteceUser.getName( ) );
 		if (userAccept.isPresent( ) )
 		{
+			  
+	        if ( !StringUtils.isEmpty( strBackUrl ) )
+	        {
+	            return redirect(request, strBackUrl);
+	        }
+			
     	   return redirect(request, AppPathService.getBaseUrl(request));
 		}
 
