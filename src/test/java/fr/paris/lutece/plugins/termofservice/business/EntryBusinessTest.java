@@ -57,25 +57,22 @@ public class EntryBusinessTest extends LuteceTestCase
         // Initialize an object
         Entry entry = new Entry();
         entry.setText( TEXT1 );
-        entry.setAccepted( ACCEPTED1 );
-
+      
         // Create test
         EntryHome.create( entry );
         Optional<Entry> optEntryStored = EntryHome.findByPrimaryKey( entry.getId( ) );
         Entry entryStored = optEntryStored.orElse( new Entry ( ) );
         assertEquals( entryStored.getText( ) , entry.getText( ) );
-        assertEquals( entryStored.getAccepted( ) , entry.getAccepted( ) );
-
+       
         // Update test
         entry.setText( TEXT2 );
-        entry.setAccepted( ACCEPTED2 );
+      
         EntryHome.update( entry );
         optEntryStored = EntryHome.findByPrimaryKey( entry.getId( ) );
         entryStored = optEntryStored.orElse( new Entry ( ) );
         
         assertEquals( entryStored.getText( ) , entry.getText( ) );
-        assertEquals( entryStored.getAccepted( ) , entry.getAccepted( ) );
-
+      
         // List test
         EntryHome.getEntrysList( );
 
