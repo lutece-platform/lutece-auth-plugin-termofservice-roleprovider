@@ -42,10 +42,13 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fr.paris.lutece.plugins.termofservice.business.Entry;
 import fr.paris.lutece.plugins.termofservice.business.EntryHome;
 import fr.paris.lutece.plugins.termofservice.business.UserAccepted;
 import fr.paris.lutece.plugins.termofservice.business.UserAcceptedHome;
+import fr.paris.lutece.plugins.verifybackurl.service.AuthorizedUrlService;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
@@ -76,6 +79,7 @@ public class EntryXPage extends MVCApplication
     // Markers
     private static final String MARK_ENTRY_LIST = "entry_list";
     private static final String MARK_ENTRY = "entry";
+    private static final String MARK_BACK_URL = "back_url";
     
     // Views
     private static final String VIEW_MANAGE_TOS = "manageEntrys";
@@ -100,6 +104,9 @@ public class EntryXPage extends MVCApplication
     @View( value = VIEW_MANAGE_TOS, defaultView = true )
     public XPage getManageTOS( HttpServletRequest request ) throws UserNotSignedException
     {
+    	
+    	
+    	 
         _entry = ( _entry != null ) ? _entry : new Entry(  );
         List<Entry> listEntrys = EntryHome.getEntrysList(  );
         Optional<Entry> entryLastVersion = EntryHome.findByLastVersion( );
@@ -113,6 +120,16 @@ public class EntryXPage extends MVCApplication
         else
         {
         	model.put( MARK_ENTRY, null );
+        }
+        
+        
+        //check back url
+        String strBackUrl = AuthorizedUrlService.getInstance().getServiceBackUrl(request );
+        
+        if ( !StringUtils.isEmpty( strBackUrl ) )
+        {
+            model.put ( MARK_BACK_URL, strBackUrl );
+        
         }
         model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_MODIFY_TOS ) );
         
@@ -176,7 +193,15 @@ public class EntryXPage extends MVCApplication
 	        
 	        UserAcceptedHome.create( userAccepted );
 	        addInfo( INFO_ENTRY_UPDATED, getLocale( request ) );
-	        return redirect(request, AppPathService.getBaseUrl(request));
+	        //check back url
+	        String strBackUrl = AuthorizedUrlService.getInstance().getServiceBackUrl(request );
+	        
+	        if ( !StringUtils.isEmpty( strBackUrl ) )
+	        {
+	            return redirect(request, strBackUrl);
+	        }
+	        	
+	        	return redirect(request, AppPathService.getBaseUrl(request));
         }
         return redirectView( request, VIEW_MANAGE_TOS );
     }
