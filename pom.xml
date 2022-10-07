@@ -13,7 +13,7 @@
     <artifactId>plugin-termofservice</artifactId>
     <packaging>lutece-plugin</packaging>
     
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>Lutece termofservice plugin</name>
 
     <repositories>
@@ -49,13 +49,13 @@
     <properties>
         <componentName>termofservice</componentName>
         <jiraProjectName>TERMOFSERVICE</jiraProjectName>
-        <jiraComponentId></jiraComponentId>
+        <jiraComponentId />
     </properties>
     
     <scm>
         <connection>scm:git:https://github.com/lutece-platform/lutece-auth-plugin-termofservice-roleprovider.git</connection>
         <developerConnection>scm:git:https://github.com/lutece-platform/lutece-auth-plugin-termofservice-roleprovider.git</developerConnection>
         <url>https://github.com/lutece-platform/lutece-auth-plugin-termofservice-roleprovider.git</url>
-        <tag>HEAD</tag>
+        <tag>plugin-termofservice-1.0.0</tag>
     </scm>
 </project>
