@@ -9,6 +9,10 @@
     <bean id="termofservice.userAcceptedDAO" class="fr.paris.lutece.plugins.termofservice.business.UserAcceptedDAO" />
    <bean id="termofservice.tOSPredicate" class="fr.paris.lutece.plugins.termofservice.web.TOSPredicate"/>
    
+   <bean id="termofservice.userAcceptedRest" class="fr.paris.lutece.plugins.termofservice.rs.UserAcceptedRest" />
+
+    <bean id="termofservice.swaggerRest" class="fr.paris.lutece.plugins.termofservice.rs.SwaggerRest" />
+   
    
   <bean id="termofservice.AutomaticRoleConfiguration.role_user_validated_tos" class="fr.paris.lutece.plugins.automaticroleprovider.service.AutomaticRoleConfiguration">
         <constructor-arg name="strRole" type="java.lang.String" value="role_user_validated_tos" /> 
