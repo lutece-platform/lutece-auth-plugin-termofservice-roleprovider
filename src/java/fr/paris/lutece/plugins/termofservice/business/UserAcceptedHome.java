@@ -35,12 +35,18 @@
 
  package fr.paris.lutece.plugins.termofservice.business;
 
+import fr.paris.lutece.plugins.rest.service.RestConstants;
+import fr.paris.lutece.plugins.termofservice.rs.Constants;
+import fr.paris.lutece.plugins.termofservice.rs.dto.UserDTO;
+import fr.paris.lutece.plugins.termofservice.service.ClientRS;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.ReferenceList;
 
-
+import java.sql.Date;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,6 +58,8 @@ public final class UserAcceptedHome
     // Static variable pointed at the DAO instance
     private static IUserAcceptedDAO _dao = SpringContextService.getBean( "termofservice.userAcceptedDAO" );
     private static Plugin _plugin = PluginService.getPlugin( "termofservice" );
+    
+    private static final String PROPERTY_URL_TOS = "termofservice.urlexternaltos";
 
     /**
      * Private constructor - this class need not be instantiated
@@ -67,8 +75,26 @@ public final class UserAcceptedHome
      */
     public static UserAccepted create( UserAccepted userAccepted )
     {
+    	if ( AppPropertiesService.getProperty( PROPERTY_URL_TOS ) != null && !AppPropertiesService.getProperty( PROPERTY_URL_TOS ).isEmpty( ) )
+    	{
+	    	ClientRS.doPost( AppPropertiesService.getProperty( PROPERTY_URL_TOS ) + RestConstants.BASE_PATH + Constants.API_PATH + "/v1" + Constants.USERACCEPTED_PATH, userAccepted );	
+    	}
+    	else
+    	{
+    		createLocal( userAccepted );
+    	}
+        return userAccepted;
+    }
+    
+    /**
+     * Create an instance of the userAccepted class
+     * @param userAccepted The instance of the UserAccepted which contains the informations to store
+     * @return The  instance of userAccepted which has been created with its primary key.
+     */
+    public static UserAccepted createLocal( UserAccepted userAccepted )
+    {
         _dao.insert( userAccepted, _plugin );
-
+    	
         return userAccepted;
     }
 
@@ -110,7 +136,33 @@ public final class UserAcceptedHome
      */
     public static Optional<UserAccepted> findByGuid( String strGuid )
     {
-        return _dao.loadByGuid( strGuid, _plugin );
+    	Optional<UserAccepted> userAccept = _dao.loadByGuid( strGuid, _plugin );
+    	if ( userAccept.isEmpty( ) && AppPropertiesService.getProperty( PROPERTY_URL_TOS ) != null && !AppPropertiesService.getProperty( PROPERTY_URL_TOS ).isEmpty( ) )
+    	{
+    		UserDTO user = ClientRS.doGet( AppPropertiesService.getProperty( PROPERTY_URL_TOS ) + RestConstants.BASE_PATH + Constants.API_PATH + "/v1" + Constants.USERACCEPTED_PATH +  "/" + strGuid);
+    		if ( user != null )
+    		{
+    			UserAccepted useraccepted = new UserAccepted( );
+    	    	useraccepted.setGuid( user.getGuid() );
+    		    useraccepted.setFkIdEntry( user.getIdTermOfService());
+    		    useraccepted.setDateAccepted( new Date( Calendar.getInstance( ).getTime( ).getTime( ) ) );
+    	        UserAcceptedHome.createLocal( useraccepted );
+    	        
+    	        return Optional.of( useraccepted );
+    		}
+    	}
+    	
+    	return userAccept;
+    }
+    
+    /**
+     * Returns an instance of a userAccepted whose identifier is specified in parameter
+     * @param strGuid The user GUID
+     * @return an instance of UserAccepted
+     */
+    public static Optional<UserAccepted> findByGuidLocal( String strGuid )
+    {
+    	return _dao.loadByGuid( strGuid, _plugin );
     }
     
     /**

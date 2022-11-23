@@ -45,6 +45,9 @@ public final class Constants
     public static final String VERSION = "version";
     public static final String ID = "id";
     
+    public static final String HEADER_SECURITY = "headersecurity";
+    public static final String PROPERTY_HEADER_SECURITY = "termofservice.headersecurity";
+    
     public static final String SWAGGER_DIRECTORY_PATH = "/plugins/";
     public static final String SWAGGER_PATH = "/swagger";
     public static final String SWAGGER_VERSION_PATH = "/v";
@@ -55,6 +58,8 @@ public final class Constants
     public static final String ERROR_NOT_FOUND_VERSION = "Version not found";
     public static final String ERROR_NOT_FOUND_RESOURCE = "Resource not found";
     public static final String ERROR_BAD_REQUEST_EMPTY_PARAMETER = "Empty parameter";
+    public static final String ERROR_USER_ALREADY_ACCEPTED = "The user has already accepted the term of service";
+    public static final String ERROR_UNAUTHORIZED = "Unauthorized use of the service";
     
     public static final String USERACCEPTED_PATH = "/useraccepteds";
     public static final String USERACCEPTED_ATTRIBUTE_GUID = "guid";
