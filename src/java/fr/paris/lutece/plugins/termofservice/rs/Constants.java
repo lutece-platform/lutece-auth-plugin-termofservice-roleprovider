@@ -67,6 +67,10 @@ public final class Constants
     public static final String USERACCEPTED_ATTRIBUTE_DATE_ACCEPTED = "date_accepted";
     public static final String USERACCEPTED_ATTRIBUTE_VERSION = "version";
     
+    //Properties
+  	public static final String PROPERTY_USED_REMOTE = "termofservice.usedRemote";
+  	public static final String PROPERTY_URL_TOS = "termofservice.urlexternaltos";
+    
     /**
      * Private constructor
      */

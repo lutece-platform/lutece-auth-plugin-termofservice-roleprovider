@@ -59,7 +59,7 @@ public final class UserAcceptedHome
     private static IUserAcceptedDAO _dao = SpringContextService.getBean( "termofservice.userAcceptedDAO" );
     private static Plugin _plugin = PluginService.getPlugin( "termofservice" );
     
-    private static final String PROPERTY_URL_TOS = "termofservice.urlexternaltos";
+
 
     /**
      * Private constructor - this class need not be instantiated
@@ -71,31 +71,38 @@ public final class UserAcceptedHome
     /**
      * Create an instance of the userAccepted class
      * @param userAccepted The instance of the UserAccepted which contains the informations to store
+     * @param bUpdateRemote true if the user must be updated
      * @return The  instance of userAccepted which has been created with its primary key.
      */
-    public static UserAccepted create( UserAccepted userAccepted )
+    public static UserAccepted create( UserAccepted userAccepted,boolean bUpdateRemote)
     {
-    	if ( AppPropertiesService.getProperty( PROPERTY_URL_TOS ) != null && !AppPropertiesService.getProperty( PROPERTY_URL_TOS ).isEmpty( ) )
-    	{
-	    	ClientRS.doPost( AppPropertiesService.getProperty( PROPERTY_URL_TOS ) + RestConstants.BASE_PATH + Constants.API_PATH + "/v1" + Constants.USERACCEPTED_PATH, userAccepted );	
-    	}
-    	else
-    	{
-    		createLocal( userAccepted );
-    	}
+    	
+    	  _dao.insert( userAccepted, _plugin );
+    	  
+    	  if(bUpdateRemote)
+    	  {
+    		  	ClientRS.doPost( AppPropertiesService.getProperty( Constants.PROPERTY_URL_TOS ) + RestConstants.BASE_PATH + Constants.API_PATH + "/v1" + Constants.USERACCEPTED_PATH, userAccepted );	
+    		  
+    	  }
+    	
+    	
         return userAccepted;
     }
+    
+    
+    
+    
     
     /**
      * Create an instance of the userAccepted class
      * @param userAccepted The instance of the UserAccepted which contains the informations to store
      * @return The  instance of userAccepted which has been created with its primary key.
      */
-    public static UserAccepted createLocal( UserAccepted userAccepted )
+    public static UserAccepted create( UserAccepted userAccepted )
     {
-        _dao.insert( userAccepted, _plugin );
+     
+    	return create(userAccepted, false);
     	
-        return userAccepted;
     }
 
     /**
@@ -132,21 +139,23 @@ public final class UserAcceptedHome
     /**
      * Returns an instance of a userAccepted whose identifier is specified in parameter
      * @param strGuid The user GUID
+     * @param bUseRemote
      * @return an instance of UserAccepted
      */
-    public static Optional<UserAccepted> findByGuid( String strGuid )
+    public static Optional<UserAccepted> findByGuid( String strGuid,boolean bUseRemote )
     {
     	Optional<UserAccepted> userAccept = _dao.loadByGuid( strGuid, _plugin );
-    	if ( userAccept.isEmpty( ) && AppPropertiesService.getProperty( PROPERTY_URL_TOS ) != null && !AppPropertiesService.getProperty( PROPERTY_URL_TOS ).isEmpty( ) )
+    	if ( bUseRemote )
     	{
-    		UserDTO user = ClientRS.doGet( AppPropertiesService.getProperty( PROPERTY_URL_TOS ) + RestConstants.BASE_PATH + Constants.API_PATH + "/v1" + Constants.USERACCEPTED_PATH +  "/" + strGuid);
+    		UserDTO user = ClientRS.doGet( AppPropertiesService.getProperty(Constants.PROPERTY_URL_TOS ) + RestConstants.BASE_PATH + Constants.API_PATH + "/v1" + Constants.USERACCEPTED_PATH +  "/" + strGuid);
     		if ( user != null )
     		{
     			UserAccepted useraccepted = new UserAccepted( );
     	    	useraccepted.setGuid( user.getGuid() );
     		    useraccepted.setFkIdEntry( user.getIdTermOfService());
     		    useraccepted.setDateAccepted( new Date( Calendar.getInstance( ).getTime( ).getTime( ) ) );
-    	        UserAcceptedHome.createLocal( useraccepted );
+    	        
+    		    UserAcceptedHome.create(useraccepted);
     	        
     	        return Optional.of( useraccepted );
     		}
@@ -155,15 +164,21 @@ public final class UserAcceptedHome
     	return userAccept;
     }
     
+    
     /**
      * Returns an instance of a userAccepted whose identifier is specified in parameter
      * @param strGuid The user GUID
      * @return an instance of UserAccepted
      */
-    public static Optional<UserAccepted> findByGuidLocal( String strGuid )
+    public static Optional<UserAccepted> findByGuid( String strGuid )
     {
-    	return _dao.loadByGuid( strGuid, _plugin );
+    	
+    	return findByGuid(strGuid, false);
+    	
     }
+    
+    
+  
     
     /**
      * Load the data of all the userAccepted objects and returns them as a list

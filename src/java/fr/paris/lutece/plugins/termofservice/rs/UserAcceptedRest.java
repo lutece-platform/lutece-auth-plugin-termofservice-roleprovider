@@ -110,7 +110,7 @@ public class UserAcceptedRest
      */
     private Response getUserAccepted( String guid )
     {
-    	Optional<UserAccepted> userAccept = UserAcceptedHome.findByGuidLocal( guid );
+    	Optional<UserAccepted> userAccept = UserAcceptedHome.findByGuid( guid );
 		if ( userAccept.isPresent( ) )
 		{
 			Map<String, Object> mapResponse = new HashMap<>( );
@@ -177,7 +177,7 @@ public class UserAcceptedRest
                     .build( );
         }
         
-        if ( UserAcceptedHome.findByGuidLocal( guid ).isPresent() )
+        if ( UserAcceptedHome.findByGuid( guid ).isPresent() )
         {
         	AppLogService.error( Constants.ERROR_USER_ALREADY_ACCEPTED );
             return Response.status( Response.Status.CONFLICT )
@@ -189,7 +189,7 @@ public class UserAcceptedRest
     	useraccepted.setGuid( guid );
 	    useraccepted.setFkIdEntry( Integer.parseInt( fk_id_entry ) );
 	    useraccepted.setDateAccepted( new Date( Calendar.getInstance( ).getTime( ).getTime( ) ) );
-        UserAcceptedHome.createLocal( useraccepted );
+        UserAcceptedHome.create( useraccepted );
         
         Map<String, Object> mapResponse = new HashMap<>( );
 		mapResponse.put(ATTRIBUTE_ID_TOS, useraccepted.getFkIdEntry( ) );
