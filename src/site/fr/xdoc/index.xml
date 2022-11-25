@@ -16,13 +16,35 @@
             </p>
             -->
             <subsection name="Introduction">
-                <p></p>
+                <p>
+                Ce plugin est utilisé pour pouvoir créer des CGU en backoffice. Ces CGU sont ensuite afficher en front
+                office et peuvent être accepter pour un usager. L'acceptation des CGU peut être stocké en local ou bien sur un
+                serveur distant accessible depuis une url configurable.
+                </p>
             </subsection>
             <subsection name="Configuration">
-                <p></p>
+                <p>
+                En Back-Office, vous pouvez accéder via la page Gestion des CGU pour ajouter ou modifier
+                des CGU. Vous pouvez également y mettre une version. Les CGU affichés en front office seront toujours
+                celles de la version la plus élevée.
+                Dans le fichier termofservice.properties se trouve deux paramètres important :
+                termofservice.usedRemote : indique si le plugin doit vérifier l'acception des CGU sur une url distante.
+                termofservice.urlexternaltos : l'url distante à utiliser, n'est activée que si le paramètre termofservice.usedRemote
+                est à true.
+                </p>
             </subsection>
             <subsection name="Usage">
-                <p></p>
+                <p>
+                La page front office des CGU est accessible via l'url Portal.jsp?page=entry
+                Lorsqu'un usage s'y connecte, le plugin vérifie si cet usager a accepté les CGU. Si ca n'est pas le cas,
+                la page d'acceptation des CGU s'affiche. 
+                Des webservice sont également disponibles : 
+                un WS GET /rest/termofservice/api/v1/useraccepteds/{guid}
+                permet de vérifier si l'usager a bien accepté les CGU via son GUID.
+                un WS POST /rest/termofservice/api/v1/useraccepteds
+                permet d'accepter les CGU pour un guid donné. Cette méthode prend en paramètre le guid et l'id des CGU 
+                accepté.
+                </p>
             </subsection>
         </section>
     </body>

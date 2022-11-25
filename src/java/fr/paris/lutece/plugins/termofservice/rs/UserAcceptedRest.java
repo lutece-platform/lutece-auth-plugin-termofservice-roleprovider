@@ -43,6 +43,8 @@ import fr.paris.lutece.util.json.JsonUtil;
 
 import org.apache.commons.lang3.StringUtils;
 import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
+
 import java.sql.Date;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -50,6 +52,7 @@ import java.util.Map;
 import java.util.Optional;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -66,7 +69,7 @@ public class UserAcceptedRest
     private static final int VERSION_1 = 1;
     private static final String ATTRIBUTE_ID_USER = "id";
     private static final String ATTRIBUTE_GUID_USER = "guid";
-    private static final String ATTRIBUTE_ID_TOS = "id terms of service";
+    private static final String ATTRIBUTE_ID_TOS = "IdTermOfService";
     
     /**
      * Get UserAccepted 
@@ -79,8 +82,17 @@ public class UserAcceptedRest
     @Produces( MediaType.APPLICATION_JSON )
     public Response getUserAccepted( 
     		@PathParam( Constants.VERSION ) Integer nVersion, 
-    		@PathParam( Constants.USERACCEPTED_ATTRIBUTE_GUID ) String guid )
+    		@PathParam( Constants.USERACCEPTED_ATTRIBUTE_GUID ) String guid,
+    		@HeaderParam ( Constants.HEADER_SECURITY ) String header_security )
     {
+    	if ( header_security == null || !header_security.equals( AppPropertiesService.getProperty( Constants.PROPERTY_HEADER_SECURITY ) ) )
+    	{
+    		AppLogService.error( Constants.ERROR_UNAUTHORIZED );
+            return Response.status( Response.Status.UNAUTHORIZED )
+                    .entity( JsonUtil.buildJsonResponse( new ErrorJsonResponse( Response.Status.UNAUTHORIZED.name( ), Constants.ERROR_UNAUTHORIZED ) ) )
+                    .build( );
+    	}
+    	
         if ( nVersion == VERSION_1 )
         {
         	return getUserAccepted( guid );
@@ -111,7 +123,7 @@ public class UserAcceptedRest
 		}
 		
 		return Response.status( Response.Status.NO_CONTENT )
-                .entity( JsonUtil.buildJsonResponse( new JsonResponse( userAccept ) ) )
+                .entity( JsonUtil.buildJsonResponse( new JsonResponse( StringUtils.EMPTY ) ) )
                 .build( );
     }
     
@@ -128,9 +140,18 @@ public class UserAcceptedRest
     public Response createUserAccepted(
     @FormParam( Constants.USERACCEPTED_ATTRIBUTE_GUID ) String guid,
     @FormParam( Constants.USERACCEPTED_ATTRIBUTE_ID_ENTRY_TOS ) String id_entry_tos,
-    @PathParam( Constants.VERSION ) Integer nVersion )
+    @PathParam( Constants.VERSION ) Integer nVersion,
+    @HeaderParam ( Constants.HEADER_SECURITY ) String header_security )
     {
-		if ( nVersion == VERSION_1 )
+    	if ( header_security == null || !header_security.equals( AppPropertiesService.getProperty( Constants.PROPERTY_HEADER_SECURITY ) ) )
+    	{
+    		AppLogService.error( Constants.ERROR_UNAUTHORIZED );
+            return Response.status( Response.Status.UNAUTHORIZED )
+                    .entity( JsonUtil.buildJsonResponse( new ErrorJsonResponse( Response.Status.UNAUTHORIZED.name( ), Constants.ERROR_UNAUTHORIZED ) ) )
+                    .build( );
+    	}
+    	
+    	if ( nVersion == VERSION_1 )
 		{
 		    return createUserAcceptedV1( guid, id_entry_tos );
 		}
@@ -156,14 +177,27 @@ public class UserAcceptedRest
                     .build( );
         }
         
+        if ( UserAcceptedHome.findByGuid( guid ).isPresent() )
+        {
+        	AppLogService.error( Constants.ERROR_USER_ALREADY_ACCEPTED );
+            return Response.status( Response.Status.CONFLICT )
+                    .entity( JsonUtil.buildJsonResponse( new ErrorJsonResponse( Response.Status.CONFLICT.name( ), Constants.ERROR_USER_ALREADY_ACCEPTED ) ) )
+                    .build( );
+        }
+        
         UserAccepted useraccepted = new UserAccepted( );
     	useraccepted.setGuid( guid );
 	    useraccepted.setFkIdEntry( Integer.parseInt( fk_id_entry ) );
 	    useraccepted.setDateAccepted( new Date( Calendar.getInstance( ).getTime( ).getTime( ) ) );
         UserAcceptedHome.create( useraccepted );
         
+        Map<String, Object> mapResponse = new HashMap<>( );
+		mapResponse.put(ATTRIBUTE_ID_TOS, useraccepted.getFkIdEntry( ) );
+		mapResponse.put(ATTRIBUTE_GUID_USER, useraccepted.getGuid( ) );
+		mapResponse.put(ATTRIBUTE_ID_USER, useraccepted.getId( ) );
+        
         return Response.status( Response.Status.OK )
-                .entity( JsonUtil.buildJsonResponse( new JsonResponse( useraccepted ) ) )
+                .entity( JsonUtil.buildJsonResponse( new JsonResponse( mapResponse ) ) )
                 .build( );
     }
     

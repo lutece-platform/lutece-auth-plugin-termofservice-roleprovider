@@ -16,13 +16,33 @@
             </p>
             -->
             <subsection name="Introduction">
-                <p></p>
+                <p>
+                This plugin is used to create TOS in backoffice. This TOS can be displayed in front office and can be
+                accepted by an user. The acceptance of the TOS can be stored in local or on a distant server. An url can be
+                used to configure the distant server.
+                </p>
             </subsection>
             <subsection name="Configuration">
-                <p></p>
+                <p>
+                In back-office, you can access the page Manage TOS to add or modify a TOS. You can also add a version attached
+                to the TOS. The TOS displayed in front office will always be the one with the greatest version.
+                In the termofservice.properties file, there is  two important parameters :
+                termofservice.usedRemote : noted if the plugin must check the acceptance of TOS on a distant url.
+                termofservice.urlexternaltos : the distant url to use. The url is activated only if the parameter
+                termofservice.usedRemote is true.
+                </p>
             </subsection>
             <subsection name="Usage">
-                <p></p>
+                <p>
+                The TOS front office page is reachable with the url Portal.jsp?page=entry
+                When a user use this url, the plugin check if the user has accepted the TOS. If this is not the case,
+                the Terms of Use acceptance page is displayed.
+                Some webservices are also available :
+                a WS GET /rest/termofservice/api/v1/useraccepteds/{guid}
+                check if a user has accepted the TOS using his GUID.
+                a WS POST /rest/termofservice/api/v1/useraccepteds
+                Accept the TOS for a user. This method takes two parameters : the guid and the TOS id.
+                </p>
             </subsection>
         </section>
     </body>

@@ -48,6 +48,7 @@ import fr.paris.lutece.plugins.termofservice.business.Entry;
 import fr.paris.lutece.plugins.termofservice.business.EntryHome;
 import fr.paris.lutece.plugins.termofservice.business.UserAccepted;
 import fr.paris.lutece.plugins.termofservice.business.UserAcceptedHome;
+import fr.paris.lutece.plugins.termofservice.rs.Constants;
 import fr.paris.lutece.plugins.verifybackurl.service.AuthorizedUrlService;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.security.LuteceUser;
@@ -56,6 +57,7 @@ import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppPathService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
@@ -69,7 +71,9 @@ import fr.paris.lutece.portal.web.xpages.XPage;
 @Controller( xpageName = "entry" , pageTitleI18nKey = "termofservice.xpage.entry.pageTitle" , pagePathI18nKey = "termofservice.xpage.entry.pagePathLabel" )
 public class EntryXPage extends MVCApplication
 {
-    // Templates
+  
+	
+	// Templates
     private static final String TEMPLATE_MANAGE_TOS = "/skin/plugins/termofservice/manage_entrys.html";
     
     // Parameters
@@ -140,7 +144,7 @@ public class EntryXPage extends MVCApplication
         	throw new UserNotSignedException( );
         }
         
-        Optional<UserAccepted> userAccept = UserAcceptedHome.findByGuid( luteceUser.getName( ) );
+        Optional<UserAccepted> userAccept = UserAcceptedHome.findByGuid( luteceUser.getName( ),AppPropertiesService.getPropertyBoolean(Constants.PROPERTY_USED_REMOTE, false) );
 		if (userAccept.isPresent( ) )
 		{
 			  
@@ -197,7 +201,10 @@ public class EntryXPage extends MVCApplication
 	        userAccepted.setVersion( _entry.getVersion( ) );
 	        userAccepted.setDateAccepted( new Date( Calendar.getInstance().getTime().getTime() ) );
 	        
-	        UserAcceptedHome.create( userAccepted );
+	        
+	        
+	        
+	        UserAcceptedHome.create( userAccepted,AppPropertiesService.getPropertyBoolean(Constants.PROPERTY_USED_REMOTE, false) );
 	        addInfo( INFO_ENTRY_UPDATED, getLocale( request ) );
 	        //check back url
 	        String strBackUrl = AuthorizedUrlService.getInstance().getServiceBackUrl(request );
