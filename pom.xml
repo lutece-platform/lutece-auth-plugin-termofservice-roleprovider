@@ -13,7 +13,7 @@
     <artifactId>plugin-termofservice</artifactId>
     <packaging>lutece-plugin</packaging>
     
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.0.2</version>
     <name>Lutece termofservice plugin</name>
 
     <repositories>
@@ -68,6 +68,6 @@
         <connection>scm:git:https://github.com/lutece-platform/lutece-auth-plugin-termofservice-roleprovider.git</connection>
         <developerConnection>scm:git:https://github.com/lutece-platform/lutece-auth-plugin-termofservice-roleprovider.git</developerConnection>
         <url>https://github.com/lutece-platform/lutece-auth-plugin-termofservice-roleprovider.git</url>
-        <tag>HEAD</tag>
+        <tag>plugin-termofservice-1.0.2</tag>
     </scm>
 </project>
