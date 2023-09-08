@@ -145,7 +145,7 @@ public final class UserAcceptedHome
     public static Optional<UserAccepted> findByGuid( String strGuid,boolean bUseRemote )
     {
     	Optional<UserAccepted> userAccept = _dao.loadByGuid( strGuid, _plugin );
-    	if ( bUseRemote )
+    	if ( !userAccept.isPresent() && bUseRemote )
     	{
     		UserDTO user = ClientRS.doGet( AppPropertiesService.getProperty(Constants.PROPERTY_URL_TOS ) + RestConstants.BASE_PATH + Constants.API_PATH + "/v1" + Constants.USERACCEPTED_PATH +  "/" + strGuid);
     		if ( user != null )
