@@ -1,25 +1,56 @@
 <#if entry?? && entry?has_content>
+<#assign optThemeParisFr=.get_optional_template('/skin/theme_parisfr_commons.html')>
+<#if optThemeParisFr.exists>
+<@cContainer class='mt-sm-5 pt-sm-5'>
+	<@cRow class='mt-sm-5 pt-sm-5'>
+		<@cCol class='mt-5'>
+			<@cTitle id='tos-main-title' class='py-3 main-info-color'>#i18n{termofservice.xpage.entry.pageTitle}</@cTitle>
+			<@cSection class='py-3 overflow-auto' params='style="height:65vh;"'>${entry.text!''}</@cSection>
+			 <@cForm action='jsp/site/Portal.jsp' >
+				<@messages errors=errors />
+				<@cInput type='hidden' id='id' name='id' value='${entry.id}' />
+				<#if back_url??> <input type="hidden" name="back_url" value="${back_url!}"></#if>
+				<@cInput type='hidden' value='${token!}' name='token' />
+				<@cInput type='hidden' name='page' value='entry' />
+				<@cFormRow class='mb-3'>
+					<@cCheckbox name='accepted' label='#i18n{termofservice.xpage.entry.labelAccepted}' required=true id='accepted' value='1' />
+				</@cFormRow>
+				<@cFormRow class='mb-5'>
+					<@cCol>
+					    <@cBtn label='Continuer' class='primary' params='name="action_modifyEntry"' />
+					</@cCol>
+				</@cFormRow>
+			</@cForm>
+		</@cCol>
+	</@cRow>
+</@cContainer>
+<#else>
 <@box>
-	<@boxHeader title='#i18n{termofservice.manage_entrys.pageTitle}' />
+	<@boxHeader title='#i18n{termofservice.xpage.entry.pageTitle}' id='tos-main-title' />
 	<@boxBody>
 		<@tform class='form-horizontal' action='jsp/site/Portal.jsp' >
-				<@messages errors=errors />
-				<@input type="hidden" id="id" name="id" value="${entry.id}"/>
-				<@input type="hidden" value="${token}" name="token" />
-				<@input type="hidden" name="page" value="entry" /> 
-				<#if back_url??> <input type="hidden" name="back_url" value="${back_url}"></#if>
-				<@formGroup labelFor='text' labelKey='#i18n{termofservice.modify_entry.labelText}' mandatory=true>
-					${entry.text!''}
-				</@formGroup>
-				<@formGroup labelFor='accepted' labelKey='#i18n{termofservice.modify_entry.labelAccepted}' mandatory=true>
-					<@checkBox id="accepted" name="accepted"  value="1" tabIndex='1' />
-				</@formGroup>
-
-				<@formGroup>
-         			<@button name='action_modifyEntry' type='submit' tabIndex='2' title='#i18n{termofservice.manage_entrys.columnAccepted}' buttonIcon='plus' />
-          			<@button name='view_manageEntrys' type='submit' title='#i18n{portal.util.labelCancel}' buttonIcon='close' color='btn-secondary' cancel=true />
-				</@formGroup>
+			<@messages errors=errors />
+			<@input type="hidden" id="id" name="id" value="${entry.id!}"/>
+			<@input type="hidden" value="${token!}" name="token" />
+			<@input type="hidden" name="page" value="entry" /> 
+			<#if back_url??> <input type="hidden" name="back_url" value="${back_url!}"></#if>
+			<@formGroup labelFor='text' labelKey='#i18n{termofservice.xpage.entry.pageTitle}' mandatory=true>
+				${entry.text!''}
+			</@formGroup>
+			<@formGroup labelFor='accepted' labelKey='#i18n{termofservice.modify_entry.labelAccepted}' mandatory=true>
+				<@checkBox id="accepted" name="accepted"  value="1" tabIndex='1' mandatory=true />
+			</@formGroup>
+			<@formGroup>
+				<@button name='action_modifyEntry' type='submit' tabIndex='2' title='#i18n{termofservice.xpage.entry.labelAccepted}' buttonIcon='plus' />
+				<@button name='view_manageEntrys' type='submit' title='#i18n{portal.util.labelCancel}' buttonIcon='close' color='btn-secondary' cancel=true />
+			</@formGroup>
 		</@tform>
 	</@boxBody>
 </@box>
 </#if>
+</#if>
+<script>
+document.addEventListener( "DOMContentLoaded", function(){
+	document.getElementById('tos-main-title' ).textContent = '#i18n{termofservice.manage_entrys.pageTitle}!};
+});
+</script>
