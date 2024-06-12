@@ -132,7 +132,7 @@ public class EntryXPage extends MVCApplication
         
         if ( !StringUtils.isEmpty( strBackUrl ) )
         {
-            model.put ( MARK_BACK_URL, strBackUrl );
+            model.put ( MARK_BACK_URL, AuthorizedUrlService.getInstance().getServiceBackUrlEncoded(request) );
         
         }
         model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_MODIFY_TOS ) );

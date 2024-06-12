@@ -41,7 +41,7 @@
         <dependency>
             <artifactId>plugin-verifybackurl</artifactId>
             <groupId>fr.paris.lutece.plugins</groupId>
-            <version>[1.0.1-SNAPSHOT,)</version>
+            <version>[1.0.3-SNAPSHOT,)</version>
             <type>lutece-plugin</type>
         </dependency>
         <dependency>
